@@ -26,10 +26,18 @@ def getCountryRates(country):
     else:
         payMonthlyButton = browser.find_element_by_id('paymonthly')
         payMonthlyButton.click()
-        # Now we get the price table and print it out
-        standardRates = browser.find_element_by_id('standardRatesTable')
-        for row in standardRates.find_elements(By.TAG_NAME, 'tr'):
-            print row.text            
+        
+        # Make sure the price table is here
+        try:
+            element = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((By.ID, 'standardRatesTable'))
+            )
+        finally:
+            # When we have the table we can print out the prices
+            standardRates = browser.find_element_by_id('standardRatesTable')
+            for row in standardRates.find_elements(By.TAG_NAME, 'tr'):
+                print row.text
+
     
 # define the URL and countries here as they have been supplied and do not change in this task
 url = "http://international.o2.co.uk/internationaltariffs/calling_abroad_from_uk"
@@ -38,6 +46,7 @@ countries = ['Canada', 'Germany', 'Iceland', 'Pakistan', 'Singapore', 'South Afr
 
 # Starts up Firefox and navigates to the URL
 browser = webdriver.Firefox()
+browser.implicitly_wait(5)
 browser.get(url)
 
 # Check we are on the right page
